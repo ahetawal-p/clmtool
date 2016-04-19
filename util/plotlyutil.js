@@ -5,14 +5,20 @@ var plotter = function(data, graphOptions) {
 	
 	var deferred = Q.defer();
 
-	plotly.plot(data, graphOptions, function (error, msg) {
-	    if (error) {
-			console.log(error);
-		 	deferred.reject(error);
-		 } else {
-	  		deferred.resolve(msg);
-	  	}
-	});
+	var sampleResponse = {
+		"url" : 'https://plot.ly/~ahetawal/298'
+	};
+
+	deferred.resolve(sampleResponse);
+
+	// plotly.plot(data, graphOptions, function (error, msg) {
+	//     if (error) {
+	// 		console.log(error);
+	// 	 	deferred.reject(error);
+	// 	 } else {
+	//   		deferred.resolve(msg);
+	//   	}
+	// });
 	return deferred.promise;
 }
 
