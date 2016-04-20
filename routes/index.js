@@ -10,6 +10,7 @@ var clmgraphutil = require('../util/clmgraphutil.js');
 // DONT Forget to add respective extract queries and graph logic for each of the new sequences
 var activeCampaignSequence = [clmdatautil.extractActiveCampaignData, clmgraphutil.genActiveCampaignGraph];
 var totalSalesCampaignSequence = [clmdatautil.extractTotalSalesCampaignData, clmgraphutil.genSalesCampaignGraph];
+var top5SalesCampaignSequence = [clmdatautil.extractTopCampaignData, clmgraphutil.genTopCampaignGraph];
 
 
 /* GET home page. */
@@ -25,12 +26,24 @@ router.post('/signin', function(req, res, next) {
 		"userEmail" : body.user_email,
 		"userTitle" : body.user_job,
 	}
+	
 	console.log("User Input: " + JSON.stringify(userInfoObject));
-	generateDashboard(userInfoObject, res);
+	
+	if('Supervisor' === userInfoObject.userTitle){
+		generateSupervisorDashboard(userInfoObject, res, next);
+	} else {
+		generateUserDashboard(userInfoObject, res, next);
+	}
+
 });
 
 
-var generateDashboard = function(userInfo, res) {
+/**
+Method used for generating USER dashabord.
+Note: Pay close attention to Q.AllSettled arraylist passed. Its used 
+for all the queries and graphing logic needed for creating user dashabord.
+**/
+var generateUserDashboard = function(userInfo, res, next) {
 	
 	// Run all sequences in parallel, and then generate the FINAL dashboard for the user	
 	Q.allSettled([
@@ -46,34 +59,88 @@ var generateDashboard = function(userInfo, res) {
 			    "rows": [
 				    [{"plot_url": g1.value.url}, {"plot_url": g2.value.url}],
 				    [{"plot_url": g1.value.url}]
-			    ],
-			    "banner": {
+			    ]
+    	};
+    	getDashboardUrlAndSendResponse(dashboard_json, userInfo, res, false, next);
+	})
+}
+
+
+
+/**
+Method used for generating SUPERVISOR dashabord.
+Note: Pay close attention to Q.AllSettled arraylist passed. Its used 
+for all the queries and graphing logic needed for creating user dashabord.
+**/
+var generateSupervisorDashboard = function(userInfo, res, next) {
+	// Run all sequences in parallel, and then generate the FINAL dashboard for the user	
+	Q.allSettled([
+					runSequence(userInfo, top5SalesCampaignSequence)
+				 ]).spread(function(g1){
+
+		console.log("Graph1 data " + JSON.stringify(g1));
+		
+		var dashboard_json = {
+			    "rows": [
+				    [{"plot_url": g1.value.url}]
+			    ]
+		};
+    	getDashboardUrlAndSendResponse(dashboard_json, userInfo, res, true, next);
+    	
+	})
+}
+
+
+/**
+Common mehtod used for generating dashboard on plotly and then responding
+back with the dashbaord url which is displayed in an iFrame on the webpage
+**/
+var getDashboardUrlAndSendResponse = function(partial_dashboard_json, userInfo, res, isSupervisor, next){
+
+	// common props for dashboard payload required by plotly
+	var common_json = {
+			"banner": {
 			    "visible": true,
 			    "backgroundcolor": "#3d4a57",
 			    "textcolor": "white",
-			    "title": "Welcome Tanay !",
+			    "title": "Welcome " + userInfo.userName  + "!",
 			    "links": []
-			    },
-			    "requireauth": false,
-			    "auth": {
-			    "username": "",
-			    "passphrase": ""
-			    }
-    	};
+			},
+			 "requireauth": false,
+			 "auth": {
+			   	"username": "",
+			   	"passphrase": ""
+			 }
+		};
 
-    	var myData = 'dashboard=' + encodeURIComponent(JSON.stringify(dashboard_json));
-    	console.log(myData);
+	// Copying both partial and common dashboard json into a new final payload object.
+	var finalPayload = Object.assign({}, partial_dashboard_json, common_json);
+
+	// Appending custom title if Supervisor
+	if(isSupervisor){
+		finalPayload.banner.title += " (Supervisor view)";
+	}
+
+	try {
+		var myData = 'dashboard=' + encodeURIComponent(JSON.stringify(finalPayload));
+    	//console.log(myData);
     	// unirest.post('https://dashboards.ly/publish')
     	// .headers({'content-type': 'application/x-www-form-urlencoded'})
     	// .send(myData)
     	// .end(function(resposne){
     	// 	console.log(resposne.body.url);
     	// 	var newDashboardUrl = 'https://dashboards.ly' + resposne.body.url;
-    	 	res.render('clmdata', { title: 'CLM Data', url: null, dashName: userInfo.userName });
+    	 	var newDashboardUrl = "http://www.cnn.com";
+    	 	res.render('clmdata', { title: 'CLM Dashboard', url: newDashboardUrl, dashName: userInfo.userName });
 
     	// })
-	})
+    } catch(e) {
+    	console.log(e);
+    	next(e);
+    }
 }
+
+
 
 /**
  Generalized Utility function to run array of promises in sequence.

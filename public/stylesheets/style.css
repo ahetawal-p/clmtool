@@ -1,9 +1,13 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+div#container {
+	background-color:#f4f7f8; 
+	padding: 5px;
+	width: 99%;
+	height: 600px;
 }
 
-a {
-  color: #00B7FF;
+div#container iframe {
+    display:block;
+    height: 95%;
+    width: 100%;
 }
 

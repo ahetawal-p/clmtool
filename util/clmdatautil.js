@@ -20,11 +20,19 @@ var extractTotalSalesCampaignData = function(userInfo) {
 	setTimeout(function(){
 		console.log("Sales Campaingn -- " + userInfo.userName);
 		deferred.resolve("Sales");
-	}, 3000);
+	}, 1000);
 	return deferred.promise;
 }
 
 
+var extractTopCampaignData = function(userInfo){
+	var deferred = Q.defer();
+	setTimeout(function(){
+		console.log("TOP Campaingns -- " + userInfo.userName);
+		deferred.resolve("Top");
+	}, 1000);
+	return deferred.promise;	
+}
 
 /**
 Form all your queries like this, with parameterized values, and 
@@ -43,9 +51,8 @@ var sampleTOBEUsed = function(userInfo){
 
 }
 
-
-
 module.exports = {
     extractActiveCampaignData : extractActiveCampaignData,
-    extractTotalSalesCampaignData : extractTotalSalesCampaignData
+    extractTotalSalesCampaignData : extractTotalSalesCampaignData,
+    extractTopCampaignData : extractTopCampaignData
 };

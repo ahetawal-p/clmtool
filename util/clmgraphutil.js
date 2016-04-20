@@ -7,6 +7,7 @@ to manipulate it and send to plotly for graphing.
 var plotlyutil = require('../util/plotlyutil.js');
 var Q = require('q');
 
+// TODO need to create grpah file specific to each user
 var genActiveCampaignGraph = function(data){
 	console.log("Active graph " + data);
 	var data = [
@@ -20,7 +21,7 @@ var genActiveCampaignGraph = function(data){
 	return plotlyutil.plotMe(data, graphOptions);
 }
 
-
+// TODO need to create grpah file specific to each user
 var genSalesCampaignGraph = function(data){
 	console.log("Sales graph " + data);
 	var data = [{
@@ -33,13 +34,29 @@ var genSalesCampaignGraph = function(data){
 	  height: 400,
 	  width: 500
 	};
-
 	var graphOptions = {filename: "piechart", fileopt: "overwrite", layout: layout, "world_readable":true};
 	return plotlyutil.plotMe(data, graphOptions);
 }
 
+
+var genTopCampaignGraph = function(data) {
+	console.log("Top Campaingn graph " + data);
+	var data = [
+		  {
+		    x: ["C1", "C2", "C3"],
+		    y: [20, 14, 23],
+		    type: "bar"
+		  }
+	];
+	var graphOptions = {filename: "top-campaigns", fileopt: "overwrite", "world_readable":true};
+	return plotlyutil.plotMe(data, graphOptions);
+
+}
+
+
 module.exports = {
     genActiveCampaignGraph : genActiveCampaignGraph,
-    genSalesCampaignGraph : genSalesCampaignGraph
+    genSalesCampaignGraph : genSalesCampaignGraph,
+    genTopCampaignGraph : genTopCampaignGraph
 
 };
