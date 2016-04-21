@@ -14,6 +14,11 @@ var salesAcrossStatesSequence = [clmdatautil.extractTotalSalesCampaignData, clmg
 
 var top5SalesCampaignSequence = [clmdatautil.extractTopCampaignData, clmgraphutil.genTopCampaignGraph];
 
+var addNewCampaignSequence = [
+					clmdatautil.addNewCampaign, 
+					clmdatautil.extractActiveCampaignData, 
+					clmgraphutil.genActiveCampaignGraph
+				];
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -32,8 +37,18 @@ router.post('/addcampaign', function(req, res, next) {
 		"endDate" : body.end_date,
 		"userName" :  body.user_name,
 	}
-	console.log("User Input: " + JSON.stringify(addCampaignObject));
-	res.send('Added');
+	console.log("Add campaign Input: " + JSON.stringify(addCampaignObject));
+	
+	Q.allSettled([runSequence(addCampaignObject, addNewCampaignSequence)])
+		.spread(function(result){
+			if(result.state === 'fulfilled') {
+				console.log("All steps completed > " + JSON.stringify(result));
+				res.send('Added');
+			} else {
+				res.send("Check data for the new campaign");
+			}
+
+		});
 });
 
 

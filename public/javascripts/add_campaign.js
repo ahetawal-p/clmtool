@@ -18,7 +18,14 @@ $(document).ready(function() {
                 });
 		 	posting.done(function(data){
 		  		console.log("Success " + data);
-		  		dialog.dialog( "close" );
+		  		if(data == 'Added'){
+		  			// reloading iframe
+		  			$('#dashboard').attr('src', $('#dashboard').attr('src'));
+		  			dialog.dialog( "close" );
+		  		} else {
+		  			alert("Error: " + data);
+		  		}
+		  		
             });
 
 		  	posting.fail(function(data){

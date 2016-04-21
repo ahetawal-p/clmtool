@@ -72,15 +72,20 @@ WHERE
 	AND UPPER(TM1."FirstName")=($1)
 	*/});
 
+
+var addNewCampaignDataQuery = multiline.stripIndent(function(){/* ADD YOUR QUERY HERE*/});
+
+
 //Replace newline & tabs with a single space.
-extractActiveCampaignDataQuery=extractActiveCampaignDataQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
-extractTotalSalesCampaignDataQuery=extractTotalSalesCampaignDataQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
+extractActiveCampaignDataQuery = extractActiveCampaignDataQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
+extractTotalSalesCampaignDataQuery = extractTotalSalesCampaignDataQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
+addNewCampaignDataQuery = addNewCampaignDataQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
+
 // extractTopCampaignData=extractTopCampaignData.replace(/\n/g, ' ').replace(/\t/g,' ');
 
 
 var extractActiveCampaignData = function(userInfo) {
 	console.log("Active Campaign -- " + userInfo.userName);
-	// return dbutil.query(extractActiveCampaignDataQuery, false);
 	return dbutil.query(extractActiveCampaignDataQuery,[userInfo.userName], false, false);
 }
 
@@ -99,8 +104,30 @@ var extractTopCampaignData = function(userInfo){
 }
 
 
+var addNewCampaign = function(campaignInfo){
+	console.log("Add new Campaign from user " + campaignInfo.userName);
+
+	var deferred = Q.defer();
+
+	// TANAY update the add new campaign query above, and keep the position of the 
+	// insert values same as below i.e. $1 is userName, $2 is campaignName and so on
+
+	dbutil.query(addNewCampaignDataQuery,
+		[campaignInfo.userName, campaignInfo.campaignName, campaignInfo.startDate, campaignInfo.endDate], 
+		true, false).then(function(value){
+						console.log("Campaign inserted successfully !! with rows: " + value);
+						deferred.resolve(campaignInfo);
+					},function(error){
+						deferred.reject(error);
+		});
+
+	return deferred.promise;	
+}
+
+
 module.exports = {
     extractActiveCampaignData : extractActiveCampaignData,
     extractTotalSalesCampaignData : extractTotalSalesCampaignData,
-    extractTopCampaignData : extractTopCampaignData
+    extractTopCampaignData : extractTopCampaignData,
+    addNewCampaign : addNewCampaign,
 };
