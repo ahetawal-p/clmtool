@@ -244,6 +244,91 @@ var genSalesAcrossStatesGraph = function(dbdata){
 }
 
 
+var genTopPerformersHeatGraph = function(dbdata){
+	console.log("Top Performers heat graph " + JSON.stringify(dbdata));
+	var yAxis = [];
+	var zAxis = [];
+	var xAxis = []
+	var fileName = "top_performers_sales";
+
+	var myData = [
+				{"FirstName":"AMIT","Quater":"Q1 2015","Sales":"700"},
+				{"FirstName":"AMIT","Quater":"Q2 2015","Sales":"450"},
+				{"FirstName":"AMIT","Quater":"Q3 2015","Sales":"900"},
+				{"FirstName":"AMIT","Quater":"Q4 2015","Sales":"250"},
+
+				{"FirstName":"Shea","Quater":"Q1 2015","Sales":"100"},
+				{"FirstName":"Shea","Quater":"Q2 2015","Sales":"200"},
+				{"FirstName":"Shea","Quater":"Q3 2015","Sales":"300"},
+				{"FirstName":"Shea","Quater":"Q4 2015","Sales":"600"},
+
+				{"FirstName":"Prachi","Quater":"Q1 2015","Sales":"800"},
+				{"FirstName":"Prachi","Quater":"Q2 2015","Sales":"50"},
+				{"FirstName":"Prachi","Quater":"Q3 2015","Sales":"700"},
+				{"FirstName":"Prachi","Quater":"Q4 2015","Sales":"100"},
+
+				{"FirstName":"Ramyata","Quater":"Q1 2015","Sales":"50"},
+				{"FirstName":"Ramyata","Quater":"Q2 2015","Sales":"100"},
+				{"FirstName":"Ramyata","Quater":"Q3 2015","Sales":"150"},
+				{"FirstName":"Ramyata","Quater":"Q4 2015","Sales":"350"}
+			];
+
+	//var myData = dbdata;
+	myData.forEach(function(results){
+		console.log(results);
+		xAxis.push(results.Quater);
+		yAxis.push(results.FirstName);
+		zAxis.push(results.Sales);
+	});
+
+	var data = [{
+			"autocolorscale": false,
+			//"zmax": 1200,
+			"colorscale": [
+				[0, "rgb(5,10,172)"],
+				[0.35, "rgb(40,60,190)"],
+				[0.5, "rgb(70,100,245)"],
+				[0.6, "rgb(90,120,245)"],
+				[0.7, "rgb(106,137,247)"],
+				[1, "rgb(220,220,220)"]
+			],
+			"zmin": 100,
+			"reversescale": true,
+			"y": yAxis,
+			"x": xAxis,
+			"z": zAxis,
+			"type": "heatmap"
+		}];
+
+	var layout = {
+		"autosize": true,
+		"yaxis": {
+			"range": [-0.5, 4.5],
+			"type": "category",
+			"autorange": true
+		},
+		"title": "Top Sales Performers by Quarter",
+		"height": 700,
+		"width": 1120,
+		"titlefont": {
+			"size": 22
+		},
+		"xaxis": {
+			"range": [-0.5, 7.5],
+			"type": "category",
+			"autorange": true
+		},
+		"font": {
+			"size": 14
+		}
+	};
+
+	var graphOptions = {filename: fileName, fileopt: "overwrite", layout: layout, "world_readable":true};
+	return plotlyutil.plotMe(data, graphOptions);
+
+}
+
+
 var genTopCampaignGraph = function(dbdata) {
 	console.log("Top Campaign graph " + dbdata);
 	var data = [
@@ -263,6 +348,7 @@ module.exports = {
     genActiveCampaignGraph : genActiveCampaignGraph,
     genSalesCampaignGraph : genSalesCampaignGraph,
     genTopCampaignGraph : genTopCampaignGraph,
-    genSalesAcrossStatesGraph: genSalesAcrossStatesGraph
+    genSalesAcrossStatesGraph: genSalesAcrossStatesGraph,
+    genTopPerformersHeatGraph: genTopPerformersHeatGraph
 
 };
