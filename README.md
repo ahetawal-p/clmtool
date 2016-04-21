@@ -9,6 +9,7 @@ Campaign data visualizer
 Clone repo: git clone https://github.com/ahetawal/clmtool.git;
 Cd: cd clmttool
 Install dependencies: npm install
+VERY IMPORTANT (under util/plotlyutil.js): Update Plotly api keys to your own.
 Start server: DEBUG=clmtool:* npm start
 ```
 
