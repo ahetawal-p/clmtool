@@ -9,38 +9,239 @@ var Q = require('q');
 
 // TODO need to create grpah file specific to each user
 var genActiveCampaignGraph = function(data){
-	console.log("Active graph " + data);
+	console.log("Active graph " + JSON.stringify(data));
+	
+	var xaxis = [];
+	var yaxis = [];
+	var fileName = "";
+
+	var myData = [
+			{"CampaignName":"C3","PhaseID":3, "FirstName": "Amit"},
+			{"CampaignName":"C4","PhaseID":4, "FirstName": "Amit"},
+			{"CampaignName":"C11","PhaseID":5, "FirstName": "Amit"},
+			{"CampaignName":"C7","PhaseID":7, "FirstName": "Amit"}
+		];
+	
+	myData.forEach(function(results){
+		console.log(results);
+		yaxis.push(results.CampaignName);
+		xaxis.push(results.PhaseID);
+		fileName = "active_campaign_" + results.FirstName;
+	});
+
+
 	var data = [
 		  {
-		    x: ["giraffes", "orangutans", "monkeys"],
-		    y: [20, 14, 23],
-		    type: "bar"
+		    x: xaxis,
+		    y: yaxis,
+		    type: "bar",
+		    orientation: 'h',
+		    marker:{
+				color:"rgb(4, 158, 215)",
+				line:{
+					color:"white",
+					width:0
+				}
+			}
 		  }
 	];
-	var graphOptions = {filename: "basic-bar", fileopt: "overwrite", "world_readable":true};
+
+	var layout = {
+			"autosize": true,
+			"yaxis": {
+				"tickfont": {
+					"color": "black",
+					"family": "\"Verdana\", monospace",
+					"size": 14
+				},
+				"title": "Campaign Name",
+				"ticks": "",
+				"gridwidth": 1,
+				"showgrid": false,
+				"range": [-0.5, 10.5],
+				"gridcolor": "white",
+				"zeroline": false,
+				"titlefont": {
+					"color": "rgb(32, 18, 77)",
+					"family": "\"Verdana\", monospace",
+					"size": 16
+				},
+				"type": "category",
+				"autorange": true
+			},
+			"paper_bgcolor": "rgb(229, 245, 249)",
+			"plot_bgcolor": "rgb(229, 245, 249)",
+			"title": "My Active Campaigns",
+			"height": 626,
+			"width": 1156,
+			"titlefont": {
+				"color": "rgb(32, 18, 77)",
+				"size": 20
+			},
+			"xaxis": {
+				"tickfont": {
+					"color": "black",
+					"family": "\"Verdana\", monospace",
+					"size": 14
+				},
+				"title": "Phase",
+				"gridwidth": 1,
+				"showgrid": false,
+				"range": [0, 7.368421052631579],
+				"gridcolor": "white",
+				"zeroline": false,
+				"titlefont": {
+					"color": "rgb(32, 18, 77)",
+					"family": "\"Verdana\", monospace",
+					"size": 16
+				},
+				"type": "linear",
+				"autorange": true,
+				ticktext : [
+	                "DP",
+	               	"Design",
+	       		 	"Approval",
+	               	"Go Live",
+	               	"Campaign",     
+	       			"Wrap-up",
+	               	"Retro"
+            	],
+       			tickvals : [ 1, 2, 3, 4, 5, 6, 7]
+			},
+			"font": {
+				"family": "\"Droid Sans\", sans-serif"
+			}
+		};
+
+	var graphOptions = {filename: fileName, fileopt: "overwrite", "world_readable":true, "layout":layout};
 	return plotlyutil.plotMe(data, graphOptions);
 }
 
+
+
 // TODO need to create grpah file specific to each user
 var genSalesCampaignGraph = function(data){
-	console.log("Sales graph " + data);
+	console.log("Sales graph " + JSON.stringify(data));
+	
+
+	var xaxis = [];
+	var forecastAxis = [];
+	var salesAxis = [];
+	var fileName = "";
+
+	var myData = [
+				{"FirstName":"AMIT","CampaignName":"C11","StateCode":"CA","TotalSalesAmount_USD_ByCampaign":"53000","ForecastAmount_USD":200000,"TotalSalesAmount_USD_ByState":"53000"},
+				{"FirstName":"AMIT","CampaignName":"C7","StateCode":"WA","TotalSalesAmount_USD_ByCampaign":"33660","ForecastAmount_USD":160000,"TotalSalesAmount_USD_ByState":"33660"}
+			];
+	
+	myData.forEach(function(results){
+		console.log(results);
+		xaxis.push(results.CampaignName);
+		forecastAxis.push(results.ForecastAmount_USD);
+		salesAxis.push(results.TotalSalesAmount_USD_ByCampaign);
+		fileName = "sales_campaign_" + results.FirstName;
+	});
+
+	var salesTrace = {
+		  x: xaxis,
+		  y: salesAxis,
+		  name: 'Sales',
+		  type: 'bar'
+	};
+
+	var forecastTrace = {
+		  x: xaxis,
+		  y: forecastAxis,
+		  marker: {
+    		color: 'rgba(24, 24, 189, 0.4)'
+  		 },
+  		name: 'Forecast',
+  		type: 'bar'
+	};
+
+	var data = [salesTrace, forecastTrace];
+
+	var layout = {
+		title: 'Sales vs Forecast',
+		barmode: 'group',
+		xaxis: {
+		  title: 'Campaign Name'
+		},
+		yaxis: {
+		  title: 'USD'
+		}
+	};
+	
+	var graphOptions = {filename: fileName, fileopt: "overwrite", layout: layout, "world_readable":true};
+	return plotlyutil.plotMe(data, graphOptions);
+}
+
+
+var genSalesAcrossStatesGraph = function(data){
+	console.log("Sales State graph " + JSON.stringify(data));
+	var locationAxis = [];
+	var zAxis = [];
+	var fileName = "";
+
+	var myData = [
+				{"FirstName":"AMIT","CampaignName":"C11","StateCode":"CA","TotalSalesAmount_USD_ByCampaign":"53000","ForecastAmount_USD":200000,"TotalSalesAmount_USD_ByState":"53000"},
+				{"FirstName":"AMIT","CampaignName":"C7","StateCode":"WA","TotalSalesAmount_USD_ByCampaign":"33660","ForecastAmount_USD":160000,"TotalSalesAmount_USD_ByState":"33660"}
+			];
+	
+	myData.forEach(function(results){
+		console.log(results);
+		locationAxis.push(results.StateCode);
+		zAxis.push(results.TotalSalesAmount_USD_ByState);
+		fileName = "sales_states_campaign_" + results.FirstName;
+	});
+
 	var data = [{
-		  values: [19, 26, 55],
-		  labels: ['Residential', 'Non-Residential', 'Utility'],
-		  type: 'pie'
+			"colorbar": {
+				"bgcolor": "rgba(0, 0, 0, 0)"
+			},
+			"autocolorscale": false,
+			"zmax": 70000,
+			"uid": "94a168",
+			"colorscale": [
+				[0, "rgb(5,10,172)"],
+				[0.35, "rgb(40,60,190)"],
+				[0.5, "rgb(70,100,245)"],
+				[0.6, "rgb(90,120,245)"],
+				[0.7, "rgb(106,137,247)"],
+				[1, "rgb(220,220,220)"]
+			],
+			"zmin": 10000,
+			"locations": locationAxis,
+			"reversescale": true,
+			"type": "choropleth",
+			"z": zAxis,
+			"locationmode": "USA-states",
+			"zauto": false
 		}];
 
 	var layout = {
-	  height: 400,
-	  width: 500
+			"autosize": true,
+			"title": "Total Sales across States",
+			"paper_bgcolor": "rgb(229, 245, 249)",
+			"height": 700,
+			"width": 1256,
+			"titlefont": {
+				"size": 20
+			},
+			"geo": {
+				"scope": "usa",
+				"bgcolor": "rgb(229, 245, 249)"
+			}
 	};
-	var graphOptions = {filename: "piechart", fileopt: "overwrite", layout: layout, "world_readable":true};
+
+	var graphOptions = {filename: fileName, fileopt: "overwrite", layout: layout, "world_readable":true};
 	return plotlyutil.plotMe(data, graphOptions);
+
 }
 
 
 var genTopCampaignGraph = function(data) {
-	console.log("Top Campaingn graph " + data);
+	console.log("Top Campaign graph " + data);
 	var data = [
 		  {
 		    x: ["C1", "C2", "C3"],
@@ -57,6 +258,7 @@ var genTopCampaignGraph = function(data) {
 module.exports = {
     genActiveCampaignGraph : genActiveCampaignGraph,
     genSalesCampaignGraph : genSalesCampaignGraph,
-    genTopCampaignGraph : genTopCampaignGraph
+    genTopCampaignGraph : genTopCampaignGraph,
+    genSalesAcrossStatesGraph: genSalesAcrossStatesGraph
 
 };

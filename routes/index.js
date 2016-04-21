@@ -10,6 +10,8 @@ var clmgraphutil = require('../util/clmgraphutil.js');
 // DONT Forget to add respective extract queries and graph logic for each of the new sequences
 var activeCampaignSequence = [clmdatautil.extractActiveCampaignData, clmgraphutil.genActiveCampaignGraph];
 var totalSalesCampaignSequence = [clmdatautil.extractTotalSalesCampaignData, clmgraphutil.genSalesCampaignGraph];
+var salesAcrossStatesSequence = [clmdatautil.extractTotalSalesCampaignData, clmgraphutil.genSalesAcrossStatesGraph];
+
 var top5SalesCampaignSequence = [clmdatautil.extractTopCampaignData, clmgraphutil.genTopCampaignGraph];
 
 
@@ -67,16 +69,18 @@ var generateUserDashboard = function(userInfo, res, next) {
 	// Run all sequences in parallel, and then generate the FINAL dashboard for the user	
 	Q.allSettled([
 					runSequence(userInfo, activeCampaignSequence), 
-				  	runSequence(userInfo, totalSalesCampaignSequence)
+				  	runSequence(userInfo, totalSalesCampaignSequence),
+				  	runSequence(userInfo, salesAcrossStatesSequence)
 
-				 ]).spread(function(g1, g2){
+				 ]).spread(function(g1, g2, g3){
 
 		console.log("Graph1 data " + JSON.stringify(g1));
 		console.log("Graph2 data " + JSON.stringify(g2));
+		console.log("Graph3 data " + JSON.stringify(g3));
 		
 		var dashboard_json = {
 			    "rows": [
-				    [{"plot_url": g1.value.url}, {"plot_url": g2.value.url}],
+				    [{"plot_url": g3.value.url}, {"plot_url": g2.value.url}],
 				    [{"plot_url": g1.value.url}]
 			    ]
     	};
@@ -143,16 +147,16 @@ var getDashboardUrlAndSendResponse = function(partial_dashboard_json, userInfo, 
 	try {
 		var myData = 'dashboard=' + encodeURIComponent(JSON.stringify(finalPayload));
     	//console.log(myData);
-    	// unirest.post('https://dashboards.ly/publish')
-    	// .headers({'content-type': 'application/x-www-form-urlencoded'})
-    	// .send(myData)
-    	// .end(function(resposne){
-    	// 	console.log(resposne.body.url);
-    	// 	var newDashboardUrl = 'https://dashboards.ly' + resposne.body.url;
-    	 	var newDashboardUrl = "http://www.cnn.com";
+    	unirest.post('https://dashboards.ly/publish')
+    	.headers({'content-type': 'application/x-www-form-urlencoded'})
+    	.send(myData)
+    	.end(function(resposne){
+    		console.log(resposne.body.url);
+    		var newDashboardUrl = 'https://dashboards.ly' + resposne.body.url;
+    	 	//var newDashboardUrl = "http://www.cnn.com";
     	 	res.render('clmdata', { title: 'CLM Dashboard', url: newDashboardUrl, dashName: userInfo.userName });
 
-    	// })
+    	 });
     } catch(e) {
     	console.log(e);
     	next(e);
