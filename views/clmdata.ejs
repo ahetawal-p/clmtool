@@ -2,13 +2,42 @@
 <html>
   <head>
     <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/jquery-ui.css' />
+    <script src="/javascripts/jquery.min.2.2.0.js"></script>
+    <script src="/stylesheets/jquery-ui.js"></script>
+    <script src="/javascripts/add_campaign.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
    </head>
   <body>
   	<h3> <%= dashName %>'s Dashboard</h3>
+    <div class="at-button">
+        <i class="material-icons md-light">add</i>
+    </div>
   	<br/>
-  	<div id="container">
+  	
+    <div id="container">
    		<iframe src="<%= url %>" name="dashboard" id="dashboard" frameborder="0" marginwidth="0" marginheight="0" scrolling="auto" onload="" allowtransparency="false"></iframe>
    	</div>
+
+  <div id="dialog-form" title="Create new campaign">
+  
+    <form>
+      <input type="hidden" name="userName" id="userName" value="<%= dashName %>">
+      <fieldset>
+        <label for="name">Campaign Name</label>
+        <input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all">
+        <label for="startdatepicker"> Start Date</label>
+        <input type="text" name="startdatepicker" id="startdatepicker" class="text ui-widget-content ui-corner-all">
+        <label for="enddatepicker"> End Date</label>
+        <input type="text" name="enddatepicker" id="enddatepicker" class="text ui-widget-content ui-corner-all">
+        <!-- Allow form submission with keyboard without duplicating the dialog button -->
+        <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+      </fieldset>
+    </form>
+  </div>
+
+
   </body>
 </html>

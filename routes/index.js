@@ -18,6 +18,25 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+router.get('/tester', function(req, res, next) {
+  res.render('tester', { title: 'Express' });
+});
+
+router.post('/addcampaign', function(req, res, next) {
+	var body = req.body;
+	var addCampaignObject = {
+		"campaignName" : body.campaign_name,
+		"startDate" : body.start_date,
+		"endDate" : body.end_date,
+		"userName" :  body.user_name,
+	}
+	console.log("User Input: " + JSON.stringify(addCampaignObject));
+	res.send('Added');
+});
+
+
+
+
 /* POST User Sing In */
 router.post('/signin', function(req, res, next) {
 	var body = req.body;
