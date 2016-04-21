@@ -1,6 +1,6 @@
 module.exports = {
 
-    databaseURL: process.env.DATABASE_URL || "postgres://localhost:5432/wellness",
+    databaseURL: process.env.DATABASE_URL || "postgres://localhost:5432/CLM",
 
     
     email_sender_id: process.env.email_sender_id,

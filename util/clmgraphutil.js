@@ -8,20 +8,21 @@ var plotlyutil = require('../util/plotlyutil.js');
 var Q = require('q');
 
 // TODO need to create grpah file specific to each user
-var genActiveCampaignGraph = function(data){
-	console.log("Active graph " + JSON.stringify(data));
+var genActiveCampaignGraph = function(dbdata){
+	console.log("Active graph " + JSON.stringify(dbdata));
 	
 	var xaxis = [];
 	var yaxis = [];
 	var fileName = "";
 
-	var myData = [
-			{"CampaignName":"C3","PhaseID":3, "FirstName": "Amit"},
-			{"CampaignName":"C4","PhaseID":4, "FirstName": "Amit"},
-			{"CampaignName":"C11","PhaseID":5, "FirstName": "Amit"},
-			{"CampaignName":"C7","PhaseID":7, "FirstName": "Amit"}
-		];
+	// var myData = [
+	// 		{"CampaignName":"C3","PhaseID":3, "FirstName": "Amit"},
+	// 		{"CampaignName":"C4","PhaseID":4, "FirstName": "Amit"},
+	// 		{"CampaignName":"C11","PhaseID":5, "FirstName": "Amit"},
+	// 		{"CampaignName":"C7","PhaseID":7, "FirstName": "Amit"}
+	// 	];
 	
+	var myData = dbdata;
 	myData.forEach(function(results){
 		console.log(results);
 		yaxis.push(results.CampaignName);
@@ -120,8 +121,8 @@ var genActiveCampaignGraph = function(data){
 
 
 // TODO need to create grpah file specific to each user
-var genSalesCampaignGraph = function(data){
-	console.log("Sales graph " + JSON.stringify(data));
+var genSalesCampaignGraph = function(dbdata){
+	console.log("Sales graph " + JSON.stringify(dbdata));
 	
 
 	var xaxis = [];
@@ -129,11 +130,13 @@ var genSalesCampaignGraph = function(data){
 	var salesAxis = [];
 	var fileName = "";
 
-	var myData = [
-				{"FirstName":"AMIT","CampaignName":"C11","StateCode":"CA","TotalSalesAmount_USD_ByCampaign":"53000","ForecastAmount_USD":200000,"TotalSalesAmount_USD_ByState":"53000"},
-				{"FirstName":"AMIT","CampaignName":"C7","StateCode":"WA","TotalSalesAmount_USD_ByCampaign":"33660","ForecastAmount_USD":160000,"TotalSalesAmount_USD_ByState":"33660"}
-			];
+	// var myData = [
+	// 			{"FirstName":"AMIT","CampaignName":"C11","StateCode":"CA","TotalSalesAmount_USD_ByCampaign":"53000","ForecastAmount_USD":200000,"TotalSalesAmount_USD_ByState":"53000"},
+	// 			{"FirstName":"AMIT","CampaignName":"C7","StateCode":"WA","TotalSalesAmount_USD_ByCampaign":"33660","ForecastAmount_USD":160000,"TotalSalesAmount_USD_ByState":"33660"}
+	// 		];
 	
+	var myData = dbdata;
+
 	myData.forEach(function(results){
 		console.log(results);
 		xaxis.push(results.CampaignName);
@@ -177,17 +180,18 @@ var genSalesCampaignGraph = function(data){
 }
 
 
-var genSalesAcrossStatesGraph = function(data){
-	console.log("Sales State graph " + JSON.stringify(data));
+var genSalesAcrossStatesGraph = function(dbdata){
+	console.log("Sales State graph " + JSON.stringify(dbdata));
 	var locationAxis = [];
 	var zAxis = [];
 	var fileName = "";
 
-	var myData = [
-				{"FirstName":"AMIT","CampaignName":"C11","StateCode":"CA","TotalSalesAmount_USD_ByCampaign":"53000","ForecastAmount_USD":200000,"TotalSalesAmount_USD_ByState":"53000"},
-				{"FirstName":"AMIT","CampaignName":"C7","StateCode":"WA","TotalSalesAmount_USD_ByCampaign":"33660","ForecastAmount_USD":160000,"TotalSalesAmount_USD_ByState":"33660"}
-			];
-	
+	// var myData = [
+	// 			{"FirstName":"AMIT","CampaignName":"C11","StateCode":"CA","TotalSalesAmount_USD_ByCampaign":"53000","ForecastAmount_USD":200000,"TotalSalesAmount_USD_ByState":"53000"},
+	// 			{"FirstName":"AMIT","CampaignName":"C7","StateCode":"WA","TotalSalesAmount_USD_ByCampaign":"33660","ForecastAmount_USD":160000,"TotalSalesAmount_USD_ByState":"33660"}
+	// 		];
+
+	var myData = dbdata;
 	myData.forEach(function(results){
 		console.log(results);
 		locationAxis.push(results.StateCode);
@@ -240,8 +244,8 @@ var genSalesAcrossStatesGraph = function(data){
 }
 
 
-var genTopCampaignGraph = function(data) {
-	console.log("Top Campaign graph " + data);
+var genTopCampaignGraph = function(dbdata) {
+	console.log("Top Campaign graph " + dbdata);
 	var data = [
 		  {
 		    x: ["C1", "C2", "C3"],
