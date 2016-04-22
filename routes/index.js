@@ -12,6 +12,8 @@ var activeCampaignSequence = [clmdatautil.extractActiveCampaignData, clmgraphuti
 var totalSalesCampaignSequence = [clmdatautil.extractTotalSalesCampaignData, clmgraphutil.genSalesCampaignGraph];
 var salesAcrossStatesSequence = [clmdatautil.extractTotalSalesCampaignData, clmgraphutil.genSalesAcrossStatesGraph];
 
+var topSalesPerformersSequence = [clmgraphutil.genTopPerformersHeatGraph];
+
 var top5SalesCampaignSequence = [clmdatautil.extractTopCampaignData, clmgraphutil.genTopCampaignGraph];
 
 var addNewCampaignSequence = [
@@ -85,18 +87,20 @@ var generateUserDashboard = function(userInfo, res, next) {
 	Q.allSettled([
 					runSequence(userInfo, activeCampaignSequence), 
 				  	runSequence(userInfo, totalSalesCampaignSequence),
-				  	runSequence(userInfo, salesAcrossStatesSequence)
+				  	runSequence(userInfo, salesAcrossStatesSequence),
+				  	runSequence(userInfo, topSalesPerformersSequence)
 
-				 ]).spread(function(g1, g2, g3){
+				 ]).spread(function(g1, g2, g3, g4){
 
 		console.log("Graph1 data " + JSON.stringify(g1));
 		console.log("Graph2 data " + JSON.stringify(g2));
 		console.log("Graph3 data " + JSON.stringify(g3));
+		console.log("Graph4 data " + JSON.stringify(g4));
 		
 		var dashboard_json = {
 			    "rows": [
 				    [{"plot_url": g3.value.url}, {"plot_url": g2.value.url}],
-				    [{"plot_url": g1.value.url}]
+				    [{"plot_url": g1.value.url}, {"plot_url": g4.value.url}]
 			    ]
     	};
     	getDashboardUrlAndSendResponse(dashboard_json, userInfo, res, false, next);
