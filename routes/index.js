@@ -11,10 +11,8 @@ var clmgraphutil = require('../util/clmgraphutil.js');
 var activeCampaignSequence = [clmdatautil.extractActiveCampaignData, clmgraphutil.genActiveCampaignGraph];
 var totalSalesCampaignSequence = [clmdatautil.extractTotalSalesCampaignData, clmgraphutil.genSalesCampaignGraph];
 var salesAcrossStatesSequence = [clmdatautil.extractTotalSalesCampaignData, clmgraphutil.genSalesAcrossStatesGraph];
-
 var topSalesPerformersSequence = [clmgraphutil.genTopPerformersHeatGraph];
 
-var top5SalesCampaignSequence = [clmdatautil.extractTopCampaignData, clmgraphutil.genTopCampaignGraph];
 
 var addNewCampaignSequence = [
 					clmdatautil.addNewCampaign, 
@@ -86,21 +84,16 @@ var generateUserDashboard = function(userInfo, res, next) {
 	// Run all sequences in parallel, and then generate the FINAL dashboard for the user	
 	Q.allSettled([
 					runSequence(userInfo, activeCampaignSequence), 
-				  	runSequence(userInfo, totalSalesCampaignSequence),
-				  	runSequence(userInfo, salesAcrossStatesSequence),
-				  	runSequence(userInfo, topSalesPerformersSequence)
+				  	runSequence(userInfo, totalSalesCampaignSequence)
+				 ]).spread(function(g1, g2){
 
-				 ]).spread(function(g1, g2, g3, g4){
-
-		console.log("Graph1 data " + JSON.stringify(g1));
-		console.log("Graph2 data " + JSON.stringify(g2));
-		console.log("Graph3 data " + JSON.stringify(g3));
-		console.log("Graph4 data " + JSON.stringify(g4));
+		console.log("User Graph1 data " + JSON.stringify(g1));
+		console.log("User Graph2 data " + JSON.stringify(g2));
 		
 		var dashboard_json = {
 			    "rows": [
-				    [{"plot_url": g3.value.url}, {"plot_url": g2.value.url}],
-				    [{"plot_url": g1.value.url}, {"plot_url": g4.value.url}]
+				    [{"plot_url": g1.value.url}],
+				    [{"plot_url": g2.value.url}]
 			    ]
     	};
     	getDashboardUrlAndSendResponse(dashboard_json, userInfo, res, false, next);
@@ -117,14 +110,17 @@ for all the queries and graphing logic needed for creating user dashabord.
 var generateSupervisorDashboard = function(userInfo, res, next) {
 	// Run all sequences in parallel, and then generate the FINAL dashboard for the user	
 	Q.allSettled([
-					runSequence(userInfo, top5SalesCampaignSequence)
-				 ]).spread(function(g1){
+					runSequence(userInfo, topSalesPerformersSequence),
+					runSequence(userInfo, salesAcrossStatesSequence)
+				 ]).spread(function(g1, g2){
 
-		console.log("Graph1 data " + JSON.stringify(g1));
+		console.log("SuperVisor Graph1 data " + JSON.stringify(g1));
+		console.log("SuperVisor Graph2 data " + JSON.stringify(g2));
 		
 		var dashboard_json = {
 			    "rows": [
-				    [{"plot_url": g1.value.url}]
+				    [{"plot_url": g1.value.url}],
+				    [{"plot_url": g2.value.url}]
 			    ]
 		};
     	getDashboardUrlAndSendResponse(dashboard_json, userInfo, res, true, next);
@@ -140,6 +136,8 @@ back with the dashbaord url which is displayed in an iFrame on the webpage
 var getDashboardUrlAndSendResponse = function(partial_dashboard_json, userInfo, res, isSupervisor, next){
 
 	// common props for dashboard payload required by plotly
+	var viewerName = "userview";
+
 	var common_json = {
 			"banner": {
 			    "visible": true,
@@ -160,7 +158,8 @@ var getDashboardUrlAndSendResponse = function(partial_dashboard_json, userInfo, 
 
 	// Appending custom title if Supervisor
 	if(isSupervisor){
-		finalPayload.banner.title += " (Supervisor view)";
+		finalPayload.banner.title += "  (Supervisor view)";
+		viewerName = "supervisorview";
 	}
 
 	try {
@@ -173,7 +172,7 @@ var getDashboardUrlAndSendResponse = function(partial_dashboard_json, userInfo, 
     		console.log(resposne.body.url);
     		var newDashboardUrl = 'https://dashboards.ly' + resposne.body.url;
     	 	//var newDashboardUrl = "http://www.cnn.com";
-    	 	res.render('clmdata', { title: 'CLM Dashboard', url: newDashboardUrl, dashName: userInfo.userName });
+    	 	res.render(viewerName, { title: 'CLM Dashboard', url: newDashboardUrl, dashName: userInfo.userName });
 
     	 });
     } catch(e) {
