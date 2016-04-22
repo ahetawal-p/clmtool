@@ -255,25 +255,25 @@ var genTopPerformersHeatGraph = function(dbdata){
 	var myData = dbdata;
 
 	// myData = [
-	// 			{"FirstName":"AMIT","Quater":"Q1 2015","Sales":"700"},
-	// 			{"FirstName":"AMIT","Quater":"Q2 2015","Sales":"450"},
-	// 			{"FirstName":"AMIT","Quater":"Q3 2015","Sales":"900"},
-	// 			{"FirstName":"AMIT","Quater":"Q4 2015","Sales":"250"},
+	// 			{"FirstName":"AMIT","Quater":"Q1 2015","Sales":"100000"},
+	// 			{"FirstName":"AMIT","Quater":"Q2 2015","Sales":"100000"},
+	// 			{"FirstName":"AMIT","Quater":"Q3 2015","Sales":"125000"},
+	// 			{"FirstName":"AMIT","Quater":"Q4 2015","Sales":"625000"},
 
-	// 			{"FirstName":"Shea","Quater":"Q1 2015","Sales":"100"},
-	// 			{"FirstName":"Shea","Quater":"Q2 2015","Sales":"200"},
-	// 			{"FirstName":"Shea","Quater":"Q3 2015","Sales":"300"},
-	// 			{"FirstName":"Shea","Quater":"Q4 2015","Sales":"600"},
+	// 			{"FirstName":"Shea","Quater":"Q1 2015","Sales":"520000"},
+	// 			{"FirstName":"Shea","Quater":"Q2 2015","Sales":"160000"},
+	// 			{"FirstName":"Shea","Quater":"Q3 2015","Sales":"250000"},
+	// 			{"FirstName":"Shea","Quater":"Q4 2015","Sales":"300000"},
 
-	// 			{"FirstName":"Prachi","Quater":"Q1 2015","Sales":"800"},
-	// 			{"FirstName":"Prachi","Quater":"Q2 2015","Sales":"50"},
-	// 			{"FirstName":"Prachi","Quater":"Q3 2015","Sales":"700"},
-	// 			{"FirstName":"Prachi","Quater":"Q4 2015","Sales":"100"},
+	// 			{"FirstName":"Prachi","Quater":"Q1 2015","Sales":"400000"},
+	// 			{"FirstName":"Prachi","Quater":"Q2 2015","Sales":"250000"},
+	// 			{"FirstName":"Prachi","Quater":"Q3 2015","Sales":"375000"},
+	// 			{"FirstName":"Prachi","Quater":"Q4 2015","Sales":"125000"},
 
-	// 			{"FirstName":"Ramyata","Quater":"Q1 2015","Sales":"50"},
-	// 			{"FirstName":"Ramyata","Quater":"Q2 2015","Sales":"100"},
-	// 			{"FirstName":"Ramyata","Quater":"Q3 2015","Sales":"150"},
-	// 			{"FirstName":"Ramyata","Quater":"Q4 2015","Sales":"350"}
+	// 			{"FirstName":"Ramyata","Quater":"Q1 2015","Sales":"390000"},
+	// 			{"FirstName":"Ramyata","Quater":"Q2 2015","Sales":"80000"},
+	// 			{"FirstName":"Ramyata","Quater":"Q3 2015","Sales":"130000"},
+	// 			{"FirstName":"Ramyata","Quater":"Q4 2015","Sales":"240000"}
 	// 		];
 
 	

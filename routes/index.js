@@ -94,6 +94,7 @@ var generateUserDashboard = function(userInfo, res, next) {
 				    [{"plot_url": g2.value.url}]
 			    ]
     	};
+
     	getDashboardUrlAndSendResponse(dashboard_json, userInfo, res, false, next);
 	})
 }
@@ -121,7 +122,9 @@ var generateSupervisorDashboard = function(userInfo, res, next) {
 				    [{"plot_url": g2.value.url}]
 			    ]
 		};
-    	getDashboardUrlAndSendResponse(dashboard_json, userInfo, res, true, next);
+		
+		getDashboardUrlAndSendResponse(dashboard_json, userInfo, res, true, next);
+    	
     	
 	})
 }
@@ -153,7 +156,7 @@ var getDashboardUrlAndSendResponse = function(partial_dashboard_json, userInfo, 
 
 	// Copying both partial and common dashboard json into a new final payload object.
 	var finalPayload = Object.assign({}, partial_dashboard_json, common_json);
-
+	
 	// Appending custom title if Supervisor
 	if(isSupervisor){
 		finalPayload.banner.title += "  (Supervisor view)";
