@@ -19,10 +19,7 @@ FROM
 		JOIN "Users" AS TM1 
 		ON C1."UserID"=TM1."UserID" 
 WHERE
-	UPPER(C1."IsCampaignApproved")='Y'
-	AND CURRENT_DATE BETWEEN C1."CampaignStartDate" 
-	AND C1."CampaignEndDate"
-	AND UPPER(TM1."FirstName")=($1)
+UPPER(TM1."FirstName")=($1)
 ORDER BY
 	P1."PhaseID"
 	*/});
@@ -53,19 +50,18 @@ WHERE
 	UPPER(C1."IsCampaignApproved") = 'Y' 
 	AND CURRENT_DATE BETWEEN C1."CampaignStartDate" 
 	AND C1."CampaignEndDate"
-	AND UPPER(TM1."FirstName")=($1)
 	*/});
 
 
 var addNewCampaignDataQuery = multiline.stripIndent(function(){/*
 INSERT
 INTO
-	PUBLIC.Campaign(CampaignName , CampaignStartDate , CampaignEndDate, UserID , CampaignPhaseID , IsCampaignApproved , Created_TS , 
-	Updated_TS) 
+	PUBLIC."Campaign"("CampaignName" , "CampaignStartDate" , "CampaignEndDate", "UserID" , "CampaignPhaseID" , "IsCampaignApproved", "Created_TS" , 
+	"Updated_TS") 
 VALUES
 	(
-		($1) , ($2) , ($3) , ($4), 1, 'N' , CURRENT_DATE , CURRENT_DATE
-	)
+		($1) , ($2) , ($3) , ($4), 1, 'Y' , CURRENT_DATE , CURRENT_DATE
+	);
 */});
 
 // Get UserID
@@ -83,7 +79,6 @@ extractActiveCampaignDataQuery = extractActiveCampaignDataQuery.replace(/\n/g, '
 extractTotalSalesCampaignDataQuery = extractTotalSalesCampaignDataQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
 addNewCampaignDataQuery = addNewCampaignDataQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
 getUserIDQuery = getUserIDQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
-getCampaignIDQuery = getCampaignIDQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
 
 // extractTopCampaignData=extractTopCampaignData.replace(/\n/g, ' ').replace(/\t/g,' ');
 
@@ -95,6 +90,9 @@ var extractActiveCampaignData = function(userInfo) {
 
 var extractTotalSalesCampaignData = function(userInfo) {
 	console.log("Sales Campaign -- " + userInfo.userName);
+	if('Member' === userInfo.userTitle){
+		extractTotalSalesCampaignDataQuery = extractTotalSalesCampaignDataQuery + ' AND UPPER(TM1."FirstName")=($1)';
+	}
 	return dbutil.query(extractTotalSalesCampaignDataQuery,[userInfo.userName], false, false);
 }
 
@@ -108,26 +106,42 @@ var extractTopCampaignData = function(userInfo){
 }
 
 var addNewCampaign = function(campaignInfo){
-	console.log("Add new Campaign from user " + campaignInfo.userName);
+    console.log("Add new Campaign from user " + campaignInfo.userName);
 
-	var deferred = Q.defer();
+    var deferred = Q.defer();
 
-	// TANAY update the add new campaign query above, and keep the position of the 
-	// insert values same as below i.e. $1 is userName, $2 is campaignName and so on
-
-	return dbutil.query(getUserIDQuery, [campaignInfo.userName],true,false); //output of this needs to go to line 148 for UserID - don't know how though.
-
-	dbutil.query(addNewCampaignDataQuery,
-		[CampaignID, campaignInfo.campaignName, campaignInfo.startDate, campaignInfo.endDate, UserID], 
-		true, false).then(function(value){
-						console.log("Campaign inserted successfully !! with rows: " + value);
-						deferred.resolve(campaignInfo);
-					},function(error){
-						deferred.reject(error);
-		});
-
-	return deferred.promise;	
+    dbutil.query(getUserIDQuery, [campaignInfo.userName],true,false)
+    	.then(function(result){
+            console.log(JSON.stringify(result));
+            dbutil.query(addNewCampaignDataQuery,[campaignInfo.campaignName, campaignInfo.startDate, campaignInfo.endDate, result.UserID], true, false)
+                .then(function(value){
+                        console.log("Campaign inserted successfully !! with rows: " + value);
+                        deferred.resolve(campaignInfo);
+                    },function(error){
+                        deferred.reject(error);
+        });
+    });
+    return deferred.promise;    
 }
+
+// var addNewCampaign = function(campaignInfo){
+// 	console.log("Add new Campaign from user " + campaignInfo.userName);
+
+// 	var deferred = Q.defer();
+
+// 	// return dbutil.query(getUserIDQuery, [campaignInfo.userName],true,false); //output of this needs to go to line 148 for UserID - don't know how though.
+
+// 	dbutil.query(addNewCampaignDataQuery,
+// 		[campaignInfo.campaignName, campaignInfo.startDate, campaignInfo.endDate, 100], 
+// 		true, false).then(function(value){
+// 						console.log("Campaign inserted successfully !! with rows: " + value);
+// 						deferred.resolve(campaignInfo);
+// 					},function(error){
+// 						deferred.reject(error);
+// 		});
+
+// 	return deferred.promise;	
+// }
 
 
 module.exports = {
