@@ -35,7 +35,7 @@ router.post('/addcampaign', function(req, res, next) {
 		"campaignName" : body.campaign_name,
 		"startDate" : body.start_date,
 		"endDate" : body.end_date,
-		"userName" :  body.user_name,
+		"userName" :  body.user_name.toUpperCase(),
 	}
 	console.log("Add campaign Input: " + JSON.stringify(addCampaignObject));
 	
@@ -58,7 +58,7 @@ router.post('/addcampaign', function(req, res, next) {
 router.post('/signin', function(req, res, next) {
 	var body = req.body;
 	var userInfoObject = {
-		"userName" : body.user_name,
+		"userName" : body.user_name.toUpperCase(),
 		"userEmail" : body.user_email,
 		"userTitle" : body.user_job,
 	}
