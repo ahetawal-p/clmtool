@@ -25,7 +25,6 @@ ORDER BY
 	*/});
 
 
-
 var extractTotalSalesCampaignDataQuery = multiline.stripIndent(function(){/*
 SELECT
 	DISTINCT UPPER(TM1."FirstName") "FirstName"
@@ -52,6 +51,10 @@ WHERE
 	AND C1."CampaignEndDate"
 	*/});
 
+var extractHeatMapDataQuery = multiline.stripIndent(function(){/*
+SELECT first_name, quarter, sales_amout_usd 
+	FROM public.qsd;
+	*/});
 
 var addNewCampaignDataQuery = multiline.stripIndent(function(){/*
 INSERT
@@ -79,9 +82,7 @@ extractActiveCampaignDataQuery = extractActiveCampaignDataQuery.replace(/\n/g, '
 extractTotalSalesCampaignDataQuery = extractTotalSalesCampaignDataQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
 addNewCampaignDataQuery = addNewCampaignDataQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
 getUserIDQuery = getUserIDQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
-
-// extractTopCampaignData=extractTopCampaignData.replace(/\n/g, ' ').replace(/\t/g,' ');
-
+extractHeatMapDataQuery = extractHeatMapDataQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
 
 var extractActiveCampaignData = function(userInfo) {
 	console.log("Active Campaign -- " + userInfo.userName);
@@ -96,13 +97,18 @@ var extractTotalSalesCampaignData = function(userInfo) {
 	return dbutil.query(extractTotalSalesCampaignDataQuery,[userInfo.userName], false, false);
 }
 
+var extractHeatMapData = function(userInfo) {
+	console.log("Sales Heat Map -- " + userInfo.userName);
+	return dbutil.query(extractHeatMapDataQuery, false, false);
+}
+
 var extractTopCampaignData = function(userInfo){
 	var deferred = Q.defer();
 	setTimeout(function(){
 		console.log("TOP Campaingns -- " + userInfo.userName);
 		deferred.resolve("Top");
 	}, 1000);
-	return deferred.promise;	
+	return deferred.promise;
 }
 
 var addNewCampaign = function(campaignInfo){
@@ -148,5 +154,6 @@ module.exports = {
     extractActiveCampaignData : extractActiveCampaignData,
     extractTotalSalesCampaignData : extractTotalSalesCampaignData,
     extractTopCampaignData : extractTopCampaignData,
+    extractHeatMapData : extractHeatMapData,
     addNewCampaign : addNewCampaign,
 };
