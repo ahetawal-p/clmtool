@@ -227,8 +227,8 @@ var genSalesAcrossStatesGraph = function(dbdata){
 			"autosize": true,
 			"title": "Total Sales across States",
 			"paper_bgcolor": "rgb(229, 245, 249)",
-			"height": 700,
-			"width": 1256,
+			"height": 900,
+			"width": 1300,
 			"titlefont": {
 				"size": 20
 			},
