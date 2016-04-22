@@ -16,17 +16,8 @@ FROM
 	"Campaign" C1 
 		JOIN "Phase" P1 
 		ON C1."CampaignPhaseID"=P1."PhaseID" 
-		JOIN "DistributionPartner" DP1 
-		ON C1."CampaignDPID"=DP1."DistributionPartnerID" 
-		JOIN "CardPartner" CP1 
-		ON C1."CampaignCPID"=CP1."CardPartnerID" 
-		JOIN "Store" S1 
-		ON c1."StoreID"=s1."StoreID" 
 		JOIN "Users" AS TM1 
 		ON C1."UserID"=TM1."UserID" 
-		JOIN "Users" AS M1 
-		ON M1."UserID"=TM1."ManagerID" 
-		AND M1."IsManager"='Y' 
 WHERE
 	UPPER(C1."IsCampaignApproved")='Y'
 	AND CURRENT_DATE BETWEEN C1."CampaignStartDate" 
@@ -49,11 +40,7 @@ SELECT
 FROM
 	"Campaign" C1 
 		JOIN "Phase" P1 
-		ON C1."CampaignPhaseID"=P1."PhaseID" 
-		JOIN "DistributionPartner" DP1 
-		ON C1."CampaignDPID"=DP1."DistributionPartnerID" 
-		JOIN "CardPartner" CP1 
-		ON C1."CampaignCPID"=CP1."CardPartnerID" 
+		ON C1."CampaignPhaseID"=P1."PhaseID"  
 		JOIN "CampaignDailySales" CDS1 
 		ON C1."CampaignID"=CDS1."CampaignID" 
 		JOIN "CampaignForecast" CF1 
@@ -61,10 +48,7 @@ FROM
 		JOIN "Store" S1 
 		ON c1."StoreID"=s1."StoreID" 
 		JOIN "Users" AS TM1 
-		ON C1."UserID"=TM1."UserID" 
-		JOIN "Users" AS M1 
-		ON M1."UserID"=TM1."ManagerID" 
-		AND M1."IsManager"='Y' 
+		ON C1."UserID"=TM1."UserID"
 WHERE
 	UPPER(C1."IsCampaignApproved") = 'Y' 
 	AND CURRENT_DATE BETWEEN C1."CampaignStartDate" 
@@ -73,13 +57,33 @@ WHERE
 	*/});
 
 
-var addNewCampaignDataQuery = multiline.stripIndent(function(){/* ADD YOUR QUERY HERE*/});
+var addNewCampaignDataQuery = multiline.stripIndent(function(){/*
+INSERT
+INTO
+	PUBLIC.Campaign(CampaignName , CampaignStartDate , CampaignEndDate, UserID , CampaignPhaseID , IsCampaignApproved , Created_TS , 
+	Updated_TS) 
+VALUES
+	(
+		($1) , ($2) , ($3) , ($4), 1, 'N' , CURRENT_DATE , CURRENT_DATE
+	)
+*/});
 
+// Get UserID
+var getUserIDQuery = multiline.stripIndent(function(){/*
+SELECT
+	DISTINCT "UserID" 
+FROM
+	"Users" 
+WHERE
+	"FirstName"=($1)
+*/});
 
 //Replace newline & tabs with a single space.
 extractActiveCampaignDataQuery = extractActiveCampaignDataQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
 extractTotalSalesCampaignDataQuery = extractTotalSalesCampaignDataQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
 addNewCampaignDataQuery = addNewCampaignDataQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
+getUserIDQuery = getUserIDQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
+getCampaignIDQuery = getCampaignIDQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
 
 // extractTopCampaignData=extractTopCampaignData.replace(/\n/g, ' ').replace(/\t/g,' ');
 
@@ -103,7 +107,6 @@ var extractTopCampaignData = function(userInfo){
 	return deferred.promise;	
 }
 
-
 var addNewCampaign = function(campaignInfo){
 	console.log("Add new Campaign from user " + campaignInfo.userName);
 
@@ -112,8 +115,10 @@ var addNewCampaign = function(campaignInfo){
 	// TANAY update the add new campaign query above, and keep the position of the 
 	// insert values same as below i.e. $1 is userName, $2 is campaignName and so on
 
+	return dbutil.query(getUserIDQuery, [campaignInfo.userName],true,false); //output of this needs to go to line 148 for UserID - don't know how though.
+
 	dbutil.query(addNewCampaignDataQuery,
-		[campaignInfo.userName, campaignInfo.campaignName, campaignInfo.startDate, campaignInfo.endDate], 
+		[CampaignID, campaignInfo.campaignName, campaignInfo.startDate, campaignInfo.endDate, UserID], 
 		true, false).then(function(value){
 						console.log("Campaign inserted successfully !! with rows: " + value);
 						deferred.resolve(campaignInfo);
