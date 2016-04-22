@@ -12,8 +12,6 @@ var activeCampaignSequence = [clmdatautil.extractActiveCampaignData, clmgraphuti
 var totalSalesCampaignSequence = [clmdatautil.extractTotalSalesCampaignData, clmgraphutil.genSalesCampaignGraph];
 var salesAcrossStatesSequence = [clmdatautil.extractTotalSalesCampaignData, clmgraphutil.genSalesAcrossStatesGraph];
 var topSalesPerformersSequence = [clmgraphutil.genTopPerformersHeatGraph];
-
-
 var addNewCampaignSequence = [
 					clmdatautil.addNewCampaign, 
 					clmdatautil.extractActiveCampaignData, 

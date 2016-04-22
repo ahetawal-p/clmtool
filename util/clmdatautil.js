@@ -4,122 +4,33 @@ All of the function should return a promis object.
 **/
 var dbutil = require('./dbutil.js');
 var Q = require('q');
-var multiline=require('multiline'); 
-
-var extractActiveCampaignDataQuery = multiline.stripIndent(function(){/*
-SELECT
-	DISTINCT UPPER(TM1."FirstName") "FirstName"
-	, C1."CampaignName" 
-	, P1."PhaseID" 
-	, P1."PhaseName" 
-FROM
-	"Campaign" C1 
-		JOIN "Phase" P1 
-		ON C1."CampaignPhaseID"=P1."PhaseID" 
-		JOIN "Users" AS TM1 
-		ON C1."UserID"=TM1."UserID" 
-WHERE
-UPPER(TM1."FirstName")=($1)
-ORDER BY
-	P1."PhaseID"
-	*/});
-
-
-var extractTotalSalesCampaignDataQuery = multiline.stripIndent(function(){/*
-SELECT
-	DISTINCT UPPER(TM1."FirstName") "FirstName"
-	, C1."CampaignName" 
-	, S1."StateCode" 
-	, SUM(COALESCE(CDS1."SalesAmount_USD" , 0)) over (PARTITION BY C1."CampaignID") "TotalSalesAmount_USD_ByCampaign" 
-	, CF1."ForecastAmount_USD" 
-	, SUM(COALESCE(CDS1."SalesAmount_USD" , 0)) over (PARTITION BY S1."StateCode") "TotalSalesAmount_USD_ByState" 
-FROM
-	"Campaign" C1 
-		JOIN "Phase" P1 
-		ON C1."CampaignPhaseID"=P1."PhaseID"  
-		JOIN "CampaignDailySales" CDS1 
-		ON C1."CampaignID"=CDS1."CampaignID" 
-		JOIN "CampaignForecast" CF1 
-		ON c1."CampaignID"=CF1."CampaignID" 
-		JOIN "Store" S1 
-		ON c1."StoreID"=s1."StoreID" 
-		JOIN "Users" AS TM1 
-		ON C1."UserID"=TM1."UserID"
-WHERE
-	UPPER(C1."IsCampaignApproved") = 'Y' 
-	AND CURRENT_DATE BETWEEN C1."CampaignStartDate" 
-	AND C1."CampaignEndDate"
-	*/});
-
-var extractHeatMapDataQuery = multiline.stripIndent(function(){/*
-SELECT first_name, quarter, sales_amout_usd 
-	FROM public.qsd;
-	*/});
-
-var addNewCampaignDataQuery = multiline.stripIndent(function(){/*
-INSERT
-INTO
-	PUBLIC."Campaign"("CampaignName" , "CampaignStartDate" , "CampaignEndDate", "UserID" , "CampaignPhaseID" , "IsCampaignApproved", "Created_TS" , 
-	"Updated_TS") 
-VALUES
-	(
-		($1) , ($2) , ($3) , ($4), 1, 'Y' , CURRENT_DATE , CURRENT_DATE
-	);
-*/});
-
-// Get UserID
-var getUserIDQuery = multiline.stripIndent(function(){/*
-SELECT
-	DISTINCT "UserID" 
-FROM
-	"Users" 
-WHERE
-	"FirstName"=($1)
-*/});
-
-//Replace newline & tabs with a single space.
-extractActiveCampaignDataQuery = extractActiveCampaignDataQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
-extractTotalSalesCampaignDataQuery = extractTotalSalesCampaignDataQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
-addNewCampaignDataQuery = addNewCampaignDataQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
-getUserIDQuery = getUserIDQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
-extractHeatMapDataQuery = extractHeatMapDataQuery.replace(/\n/g, ' ').replace(/\t/g,' ');
+var constants = require('./constants.js'); 
 
 var extractActiveCampaignData = function(userInfo) {
-	console.log("Active Campaign -- " + userInfo.userName);
-	return dbutil.query(extractActiveCampaignDataQuery,[userInfo.userName], false, false);
+	console.log("\nExtracting ____Active Campaign data____\n");
+	return dbutil.query(constants.activeCampaignDataQuery,[userInfo.userName], false, false);
 }
 
 var extractTotalSalesCampaignData = function(userInfo) {
-	console.log("Sales Campaign -- " + userInfo.userName);
+	console.log("\nExtracting ____Sales Campaign data____\n");
+	var finalQuery = constants.totalSalesCampaignDataQuery;
 	if('Member' === userInfo.userTitle){
-		extractTotalSalesCampaignDataQuery = extractTotalSalesCampaignDataQuery + ' AND UPPER(TM1."FirstName")=($1)';
+		finalQuery = finalQuery + ' AND UPPER(TM1."FirstName")=($1)';
 	}
-	return dbutil.query(extractTotalSalesCampaignDataQuery,[userInfo.userName], false, false);
+	return dbutil.query(finalQuery,[userInfo.userName], false, false);
 }
 
 var extractHeatMapData = function(userInfo) {
-	console.log("Sales Heat Map -- " + userInfo.userName);
-	return dbutil.query(extractHeatMapDataQuery, false, false);
-}
-
-var extractTopCampaignData = function(userInfo){
-	var deferred = Q.defer();
-	setTimeout(function(){
-		console.log("TOP Campaingns -- " + userInfo.userName);
-		deferred.resolve("Top");
-	}, 1000);
-	return deferred.promise;
+	console.log("\nExtracting ____Sales Heat Map data____ \n");
+	return dbutil.query(constants.heatMapDataQuery, false, false);
 }
 
 var addNewCampaign = function(campaignInfo){
-    console.log("Add new Campaign from user " + campaignInfo.userName);
-
+    console.log("\nAdding New Campaign \n");
     var deferred = Q.defer();
-
-    dbutil.query(getUserIDQuery, [campaignInfo.userName],true,false)
+    dbutil.query(constants.getUserIDQuery, [campaignInfo.userName],true,false)
     	.then(function(result){
-            console.log(JSON.stringify(result));
-            dbutil.query(addNewCampaignDataQuery,[campaignInfo.campaignName, campaignInfo.startDate, campaignInfo.endDate, result.UserID], true, false)
+            dbutil.query(constants.addNewCampaignDataQuery,[campaignInfo.campaignName, campaignInfo.startDate, campaignInfo.endDate, result.UserID], true, false)
                 .then(function(value){
                         console.log("Campaign inserted successfully !! with rows: " + value);
                         deferred.resolve(campaignInfo);
@@ -130,30 +41,9 @@ var addNewCampaign = function(campaignInfo){
     return deferred.promise;    
 }
 
-// var addNewCampaign = function(campaignInfo){
-// 	console.log("Add new Campaign from user " + campaignInfo.userName);
-
-// 	var deferred = Q.defer();
-
-// 	// return dbutil.query(getUserIDQuery, [campaignInfo.userName],true,false); //output of this needs to go to line 148 for UserID - don't know how though.
-
-// 	dbutil.query(addNewCampaignDataQuery,
-// 		[campaignInfo.campaignName, campaignInfo.startDate, campaignInfo.endDate, 100], 
-// 		true, false).then(function(value){
-// 						console.log("Campaign inserted successfully !! with rows: " + value);
-// 						deferred.resolve(campaignInfo);
-// 					},function(error){
-// 						deferred.reject(error);
-// 		});
-
-// 	return deferred.promise;	
-// }
-
-
 module.exports = {
     extractActiveCampaignData : extractActiveCampaignData,
     extractTotalSalesCampaignData : extractTotalSalesCampaignData,
-    extractTopCampaignData : extractTopCampaignData,
     extractHeatMapData : extractHeatMapData,
     addNewCampaign : addNewCampaign,
 };

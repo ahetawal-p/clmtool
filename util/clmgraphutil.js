@@ -7,7 +7,6 @@ to manipulate it and send to plotly for graphing.
 var plotlyutil = require('../util/plotlyutil.js');
 var Q = require('q');
 
-// TODO need to create grpah file specific to each user
 var genActiveCampaignGraph = function(dbdata){
 	console.log("Active graph " + JSON.stringify(dbdata));
 	
@@ -15,14 +14,16 @@ var genActiveCampaignGraph = function(dbdata){
 	var yaxis = [];
 	var fileName = "";
 
-	// var myData = [
+	var myData = dbdata;
+	
+	// myData = [
 	// 		{"CampaignName":"C3","PhaseID":3, "FirstName": "Amit"},
 	// 		{"CampaignName":"C4","PhaseID":4, "FirstName": "Amit"},
 	// 		{"CampaignName":"C11","PhaseID":5, "FirstName": "Amit"},
 	// 		{"CampaignName":"C7","PhaseID":7, "FirstName": "Amit"}
 	// 	];
 	
-	var myData = dbdata;
+	
 	myData.forEach(function(results){
 		console.log(results);
 		yaxis.push(results.CampaignName);
@@ -120,7 +121,6 @@ var genActiveCampaignGraph = function(dbdata){
 
 
 
-// TODO need to create grpah file specific to each user
 var genSalesCampaignGraph = function(dbdata){
 	console.log("Sales graph " + JSON.stringify(dbdata));
 	
@@ -130,13 +130,13 @@ var genSalesCampaignGraph = function(dbdata){
 	var salesAxis = [];
 	var fileName = "";
 
-	// var myData = [
+	var myData = dbdata;
+
+	// myData = [
 	// 			{"FirstName":"AMIT","CampaignName":"C11","StateCode":"CA","TotalSalesAmount_USD_ByCampaign":"53000","ForecastAmount_USD":200000,"TotalSalesAmount_USD_ByState":"53000"},
 	// 			{"FirstName":"AMIT","CampaignName":"C7","StateCode":"WA","TotalSalesAmount_USD_ByCampaign":"33660","ForecastAmount_USD":160000,"TotalSalesAmount_USD_ByState":"33660"}
 	// 		];
 	
-	var myData = dbdata;
-
 	myData.forEach(function(results){
 		console.log(results);
 		xaxis.push(results.CampaignName);
@@ -186,12 +186,13 @@ var genSalesAcrossStatesGraph = function(dbdata){
 	var zAxis = [];
 	var fileName = "";
 
-	// var myData = [
+	var myData = dbdata;
+
+	// myData = [
 	// 			{"FirstName":"AMIT","CampaignName":"C11","StateCode":"CA","TotalSalesAmount_USD_ByCampaign":"53000","ForecastAmount_USD":200000,"TotalSalesAmount_USD_ByState":"53000"},
 	// 			{"FirstName":"AMIT","CampaignName":"C7","StateCode":"WA","TotalSalesAmount_USD_ByCampaign":"33660","ForecastAmount_USD":160000,"TotalSalesAmount_USD_ByState":"33660"}
 	// 		];
 
-	var myData = dbdata;
 	myData.forEach(function(results){
 		console.log(results);
 		locationAxis.push(results.StateCode);
@@ -251,29 +252,31 @@ var genTopPerformersHeatGraph = function(dbdata){
 	var xAxis = []
 	var fileName = "top_performers_sales";
 
-	var myData = [
-				{"FirstName":"AMIT","Quater":"Q1 2015","Sales":"700"},
-				{"FirstName":"AMIT","Quater":"Q2 2015","Sales":"450"},
-				{"FirstName":"AMIT","Quater":"Q3 2015","Sales":"900"},
-				{"FirstName":"AMIT","Quater":"Q4 2015","Sales":"250"},
+	var myData = dbdata;
 
-				{"FirstName":"Shea","Quater":"Q1 2015","Sales":"100"},
-				{"FirstName":"Shea","Quater":"Q2 2015","Sales":"200"},
-				{"FirstName":"Shea","Quater":"Q3 2015","Sales":"300"},
-				{"FirstName":"Shea","Quater":"Q4 2015","Sales":"600"},
+	// myData = [
+	// 			{"FirstName":"AMIT","Quater":"Q1 2015","Sales":"700"},
+	// 			{"FirstName":"AMIT","Quater":"Q2 2015","Sales":"450"},
+	// 			{"FirstName":"AMIT","Quater":"Q3 2015","Sales":"900"},
+	// 			{"FirstName":"AMIT","Quater":"Q4 2015","Sales":"250"},
 
-				{"FirstName":"Prachi","Quater":"Q1 2015","Sales":"800"},
-				{"FirstName":"Prachi","Quater":"Q2 2015","Sales":"50"},
-				{"FirstName":"Prachi","Quater":"Q3 2015","Sales":"700"},
-				{"FirstName":"Prachi","Quater":"Q4 2015","Sales":"100"},
+	// 			{"FirstName":"Shea","Quater":"Q1 2015","Sales":"100"},
+	// 			{"FirstName":"Shea","Quater":"Q2 2015","Sales":"200"},
+	// 			{"FirstName":"Shea","Quater":"Q3 2015","Sales":"300"},
+	// 			{"FirstName":"Shea","Quater":"Q4 2015","Sales":"600"},
 
-				{"FirstName":"Ramyata","Quater":"Q1 2015","Sales":"50"},
-				{"FirstName":"Ramyata","Quater":"Q2 2015","Sales":"100"},
-				{"FirstName":"Ramyata","Quater":"Q3 2015","Sales":"150"},
-				{"FirstName":"Ramyata","Quater":"Q4 2015","Sales":"350"}
-			];
+	// 			{"FirstName":"Prachi","Quater":"Q1 2015","Sales":"800"},
+	// 			{"FirstName":"Prachi","Quater":"Q2 2015","Sales":"50"},
+	// 			{"FirstName":"Prachi","Quater":"Q3 2015","Sales":"700"},
+	// 			{"FirstName":"Prachi","Quater":"Q4 2015","Sales":"100"},
 
-	//var myData = dbdata;
+	// 			{"FirstName":"Ramyata","Quater":"Q1 2015","Sales":"50"},
+	// 			{"FirstName":"Ramyata","Quater":"Q2 2015","Sales":"100"},
+	// 			{"FirstName":"Ramyata","Quater":"Q3 2015","Sales":"150"},
+	// 			{"FirstName":"Ramyata","Quater":"Q4 2015","Sales":"350"}
+	// 		];
+
+	
 	myData.forEach(function(results){
 		console.log(results);
 		xAxis.push(results.Quater);
@@ -329,26 +332,9 @@ var genTopPerformersHeatGraph = function(dbdata){
 }
 
 
-var genTopCampaignGraph = function(dbdata) {
-	console.log("Top Campaign graph " + dbdata);
-	var data = [
-		  {
-		    x: ["C1", "C2", "C3"],
-		    y: [20, 14, 23],
-		    type: "bar"
-		  }
-	];
-	var graphOptions = {filename: "top-campaigns", fileopt: "overwrite", "world_readable":true};
-	return plotlyutil.plotMe(data, graphOptions);
-
-}
-
-
 module.exports = {
     genActiveCampaignGraph : genActiveCampaignGraph,
     genSalesCampaignGraph : genSalesCampaignGraph,
-    genTopCampaignGraph : genTopCampaignGraph,
     genSalesAcrossStatesGraph: genSalesAcrossStatesGraph,
     genTopPerformersHeatGraph: genTopPerformersHeatGraph
-
 };
