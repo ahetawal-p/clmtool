@@ -17,7 +17,10 @@ var extractTotalSalesCampaignData = function(userInfo) {
 	if('Member' === userInfo.userTitle){
 		finalQuery = finalQuery + ' AND UPPER(TM1."FirstName")=($1)';
 	}
+    if('Member' === userInfo.userTitle){
 	return dbutil.query(finalQuery,[userInfo.userName], false, false);
+    }
+    return dbutil.query(finalQuery, false);
 }
 
 var extractHeatMapData = function(userInfo) {

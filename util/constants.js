@@ -46,7 +46,7 @@ WHERE
 	*/});
 
 var extractHeatMapDataQuery = multiline.stripIndent(function(){/*
-SELECT first_name, quarter, sales_amout_usd 
+SELECT first_name as "FirstName", quarter "Quater", sales_amout_usd "Sales"
 	FROM public.qsd;
 	*/});
 

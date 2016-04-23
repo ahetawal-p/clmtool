@@ -6,12 +6,10 @@ var unirest = require('unirest');
 var clmdatautil = require('../util/clmdatautil.js');
 var clmgraphutil = require('../util/clmgraphutil.js');
 
-// Add more sequences as we build more charts.
-// DONT Forget to add respective extract queries and graph logic for each of the new sequences
 var activeCampaignSequence = [clmdatautil.extractActiveCampaignData, clmgraphutil.genActiveCampaignGraph];
 var totalSalesCampaignSequence = [clmdatautil.extractTotalSalesCampaignData, clmgraphutil.genSalesCampaignGraph];
 var salesAcrossStatesSequence = [clmdatautil.extractTotalSalesCampaignData, clmgraphutil.genSalesAcrossStatesGraph];
-var topSalesPerformersSequence = [clmgraphutil.genTopPerformersHeatGraph];
+var topSalesPerformersSequence = [clmdatautil.extractHeatMapData, clmgraphutil.genTopPerformersHeatGraph];
 var addNewCampaignSequence = [
 					clmdatautil.addNewCampaign, 
 					clmdatautil.extractActiveCampaignData, 
@@ -49,9 +47,6 @@ router.post('/addcampaign', function(req, res, next) {
 		});
 });
 
-
-
-
 /* POST User Sing In */
 router.post('/signin', function(req, res, next) {
 	var body = req.body;
@@ -71,11 +66,10 @@ router.post('/signin', function(req, res, next) {
 
 });
 
-
 /**
 Method used for generating USER dashabord.
 Note: Pay close attention to Q.AllSettled arraylist passed. Its used 
-for all the queries and graphing logic needed for creating user dashabord.
+for all the queries and graphing logic needed for creating user dashboard.
 **/
 var generateUserDashboard = function(userInfo, res, next) {
 	
@@ -98,8 +92,6 @@ var generateUserDashboard = function(userInfo, res, next) {
     	getDashboardUrlAndSendResponse(dashboard_json, userInfo, res, false, next);
 	})
 }
-
-
 
 /**
 Method used for generating SUPERVISOR dashabord.
@@ -181,8 +173,6 @@ var getDashboardUrlAndSendResponse = function(partial_dashboard_json, userInfo, 
     	next(e);
     }
 }
-
-
 
 /**
  Generalized Utility function to run array of promises in sequence.
