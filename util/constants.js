@@ -45,13 +45,9 @@ WHERE
 	AND C1."CampaignEndDate"
 	*/});
 
-// var extractHeatMapDataQuery = multiline.stripIndent(function(){
-// SELECT first_name as "FirstName", quarter "Quater", sales_amout_usd "Sales"
-// 	FROM public.qsd;
-// 	});
 
 var extractHeatMapDataQuery = multiline.stripIndent(function(){/*
-SELECT first_name as "FirstName", quarter "Quater", sales_amout_usd "Sales"
+SELECT first_name as "FirstName", quarter as "Quater", sales_amout_usd as "Sales"
 FROM
 	PUBLIC.qsd 
 ORDER BY

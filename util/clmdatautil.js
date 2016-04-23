@@ -16,10 +16,8 @@ var extractTotalSalesCampaignData = function(userInfo) {
 	var finalQuery = constants.totalSalesCampaignDataQuery;
 	if('Member' === userInfo.userTitle){
 		finalQuery = finalQuery + ' AND UPPER(TM1."FirstName")=($1)';
+		return dbutil.query(finalQuery,[userInfo.userName], false, false);
 	}
-    if('Member' === userInfo.userTitle){
-	return dbutil.query(finalQuery,[userInfo.userName], false, false);
-    }
     return dbutil.query(finalQuery, false);
 }
 
