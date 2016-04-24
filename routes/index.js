@@ -5,6 +5,8 @@ var Q = require('q');
 var unirest = require('unirest');
 var clmdatautil = require('../util/clmdatautil.js');
 var clmgraphutil = require('../util/clmgraphutil.js');
+var emailutil = require('../util/emailutil.js');
+
 
 var activeCampaignSequence = [clmdatautil.extractActiveCampaignData, clmgraphutil.genActiveCampaignGraph];
 var totalSalesCampaignSequence = [clmdatautil.extractTotalSalesCampaignData, clmgraphutil.genSalesCampaignGraph];
@@ -20,6 +22,27 @@ var addNewCampaignSequence = [
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
+
+
+/**
+Sample email method, might need to enhance to get fetch data at runtime and
+generate images
+**/
+router.post('/emailme', function(req, res, next) {
+ 	plotlyutil.getPlotData('16').then(function(figure){
+ 		plotlyutil.getPlotImage(figure).then(function(stream){
+ 			return emailutil.sendMail(stream, 'amit.hetawal@gmail.com,tanay.sd@gmail.com', 'CLM Supervisor view');
+ 		}).done(function(result){
+					console.log(result);
+					res.send("Success");
+				},
+    			function(error){
+    				console.log(error);
+    				next(error);
+			});;
+ 	});
+});
+
 
 /**
 Tester method to test a dashboard directly.
