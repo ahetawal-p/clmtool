@@ -21,8 +21,22 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+/**
+Tester method to test a dashboard directly.
+Wihtout going through the DB.
+**/
 router.get('/tester', function(req, res, next) {
-  res.render('tester', { title: 'Express' });
+  //res.render('tester', { title: 'Express' });
+  var dashboard_json = {
+			    "rows": [
+				    [{"plot_url": 'https://plot.ly/~tanaysd/16'}],
+				    [{"plot_url": 'https://plot.ly/~tanaysd/29'}]
+			    ]
+		};
+	var userInfo = {
+		"userName" : "Amit"
+	}
+	getDashboardUrlAndSendResponse(dashboard_json, userInfo, res, true, next);	
 });
 
 router.post('/addcampaign', function(req, res, next) {
